@@ -1,3 +1,13 @@
-export default function LatestNewsPage(){
-    return <h1>Latest News Page</h1>
+import NewsList from "@/app/components/news-list";
+import { getLatestNews } from "@/lib/news";
+
+export default function LatestNewsPage() {
+  const latestNews = getLatestNews();
+
+  return (
+    <>
+      <h2>Latest News</h2>
+      <NewsList news={latestNews} />
+    </>
+  );
 }
