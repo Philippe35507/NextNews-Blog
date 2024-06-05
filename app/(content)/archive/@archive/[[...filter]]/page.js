@@ -1,3 +1,4 @@
+import Link from "next/link";
 import NewsList from "@/app/components/news-list";
 import {
   getAvailableNewsMonths,
@@ -5,24 +6,23 @@ import {
   getNewsForYear,
   getNewsForYearAndMonth,
 } from "@/lib/news";
-import Link from "next/link";
 
-export default function FilteredNewsPage({ params }) {
+export default async function FilteredNewsPage({ params }) {
   const filter = params.filter;
 
   const selectedYear = filter?.[0];
   const selectedMonth = filter?.[1];
 
   let news;
-  let links = getAvailableNewsYears();
+  let links = await getAvailableNewsYears();
 
   if (selectedYear && !selectedMonth) {
-    news = getNewsForYear(selectedYear);
+    news = await getNewsForYear(selectedYear);
     links = getAvailableNewsMonths(selectedYear);
   }
 
   if (selectedYear && selectedMonth) {
-    news = getNewsForYearAndMonth(selectedYear, selectedMonth);
+    news = await getNewsForYearAndMonth(selectedYear, selectedMonth);
     links = [];
   }
 
@@ -32,10 +32,12 @@ export default function FilteredNewsPage({ params }) {
     newsContent = <NewsList news={news} />;
   }
 
+  const availableYears = await getAvailableNewsYears();
+
   if (
-    (selectedYear && !getAvailableNewsYears().includes(+selectedYear)) ||
+    (selectedYear && !availableYears.includes(selectedYear)) ||
     (selectedMonth &&
-      !getAvailableNewsMonths(selectedYear).includes(+selectedMonth))
+      !getAvailableNewsMonths(selectedYear).includes(selectedMonth))
   ) {
     throw new Error("Invalid filter");
   }
@@ -47,8 +49,8 @@ export default function FilteredNewsPage({ params }) {
           <ul>
             {links.map((link) => {
               const href = selectedYear
-                ? `${selectedYear}/${link}`
-                : `./archive/${link}`;
+                ? `/archive/${selectedYear}/${link}`
+                : `/archive/${link}`;
 
               return (
                 <li key={link}>
