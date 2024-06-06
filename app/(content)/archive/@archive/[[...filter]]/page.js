@@ -54,7 +54,7 @@ async function FilteredNews({ year, month }) {
   } else if (year && month) {
     news = await getNewsForYearAndMonth(year, month);
   }
-  let newsContent = <p>No news found for the selected period.</p>;
+  let newsContent = <p>Choose period</p>;
 
   if (news && news.length > 0) {
     newsContent = <NewsList news={news} />;
